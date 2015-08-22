@@ -4,6 +4,8 @@ using System.Collections.Generic;
 public class NavPoint : MonoBehaviour
 {
 
+    public bool visited = false;
+
 	public List<NavPoint> neighbours;
 	public Vector3 position
 	{
@@ -18,6 +20,7 @@ public class NavPoint : MonoBehaviour
 			if(np != null)
 				nps.Add(np);
 		neighbours = nps;
+        
 	}
 
 	void OnDrawGizmos()

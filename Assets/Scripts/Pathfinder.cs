@@ -5,14 +5,13 @@ public class Pathfinder : MonoBehaviour
 {
 
 	public List<NavPoint> allPoints;
-	public LayerMask rayMask;
 
 	void Start()
 	{
 		ResetPointList();
 	}
 
-	public NavPoint[] GetShortestPath(NavPoint start, Transform target)
+	public NavPoint[] GetShortestPath(NavPoint start, NavPoint target)
 	{
 		HashSet<NavPoint> visited = new HashSet<NavPoint>();
 		SortedDictionary<float,NavPoint> pq = new SortedDictionary<float, NavPoint>();
@@ -75,14 +74,9 @@ public class Pathfinder : MonoBehaviour
 	}
 
 	//a navpoint is the goal if we can see the target from it
-	bool IsGoal(NavPoint np, Transform target)
+	bool IsGoal(NavPoint np, NavPoint target)
 	{
-		RaycastHit2D hit;
-		Vector3 targetDir = (target.position - np.position).normalized;
-		if(hit = Physics2D.Raycast(np.position,targetDir,100,rayMask)) {
-			return hit.transform.gameObject.layer == target.gameObject.layer;
-		}
-		return false;
+        return np.GetInstanceID() == target.GetInstanceID();
 	}
 
 	public NavPoint ClosestNavPoint(Vector3 position)
