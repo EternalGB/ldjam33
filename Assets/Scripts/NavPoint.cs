@@ -41,10 +41,39 @@ public class NavPoint : MonoBehaviour
     {
         if (neighbours.Count > 0)
         {
-            return neighbours[neighbours.Count - 1];
+            return neighbours[Random.Range(0,neighbours.Count)];
         }
         else
             return null;
+    }
+
+    public NavPoint TryGetRandomDifferentPoint(NavPoint notThis)
+    {
+        if (neighbours.Count == 1)
+            return neighbours[0];
+        else if(neighbours.Count == 2)
+        {
+            return neighbours.Find( (np) => {
+                return !np.Equals(notThis);
+            });
+        }
+        else
+        {
+            NavPoint point;
+            do
+            {
+                point = GetRandomNeighbour();
+            } while (point.Equals(notThis));
+            return point;
+        }
+    }
+
+    public override bool Equals(object o)
+    {
+        NavPoint other = o as NavPoint;
+        if (other == null)
+            return false;
+        return this.GetInstanceID() == other.GetInstanceID();
     }
 
 }

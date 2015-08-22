@@ -7,20 +7,21 @@ public class TributeController : MonoBehaviour
     public Pathfinder pathfinder;
     public NavPoint startPoint;
     public NavGrid grid;
-
     public float speed;
     public Vector3 dir;
-    public NavPoint[] currentPath;
-    public int pathIndex;
+    public NavPoint nextPoint, lastPoint;
+
+    float lerpTimer, lerpSpeed;
 
     void Start()
     {
         pathfinder = GameObject.FindWithTag("Pathfinder").GetComponent<Pathfinder>();
         grid = GameObject.FindWithTag("NavGrid").GetComponent<NavGrid>();
 
-        NavPoint nextPoint = GetRandomNavPoint(startPoint);
-        currentPath = pathfinder.GetShortestPath(startPoint, nextPoint);
-        pathIndex = 0;
+        lastPoint = startPoint;
+        nextPoint = lastPoint.GetRandomNeighbour();
+        lerpTimer = 0;
+        lerpSpeed = speed/Vector3.Distance(lastPoint.position, nextPoint.position);
     }
 
     NavPoint GetRandomNavPoint(NavPoint currentPoint)
@@ -35,37 +36,24 @@ public class TributeController : MonoBehaviour
 
     void Update()
     {
-        if (currentPath != null)
+        
+        //if we're close enough to our destination then go to the next point
+        if (lerpTimer >= 1)
         {
-            //if we're close enough to our destination then go to the next point
-            if (Util.XZDistance(transform.position, currentPath[pathIndex].position) < 0.5f)
-            {
-                //shift ourselves to where the point actually is
-                SetXZPosition(currentPath[pathIndex].position);
-                pathIndex++;
-                if (pathIndex >= currentPath.Length)
-                {
-                    NavPoint nextGoal = GetRandomNavPoint(currentPath[currentPath.Length - 1]);
-                    if (nextGoal != null)
-                    {
-                        currentPath = pathfinder.GetShortestPath(currentPath[currentPath.Length - 1], nextGoal);
-                        pathIndex = 0;
-                    }
-                    else
-                    {
-                        currentPath = null;
-                    }
-                }
-            }
-            if (pathIndex - 1 >= 0 && pathIndex < currentPath.Length)
-                dir = (currentPath[pathIndex].position - currentPath[pathIndex - 1].position).normalized;
-        }
-        else
-        {
-            dir = Vector3.zero;
-        }
+            //shift ourselves to where the point actually is
+            //transform.position = nextPoint.position;
 
-        transform.position += dir * speed * Time.deltaTime;
+            NavPoint oldNext = nextPoint;
+            nextPoint = nextPoint.TryGetRandomDifferentPoint(lastPoint);
+            lastPoint = oldNext;
+            lerpTimer = 0;
+            lerpSpeed = speed/Vector3.Distance(lastPoint.position, nextPoint.position);
+        }
+        if (nextPoint != null)
+        {
+            lerpTimer += lerpSpeed*Time.deltaTime;
+            transform.position = Vector3.Lerp(lastPoint.position, nextPoint.position, lerpTimer);
+        }
     }
 
     void SetXZPosition(Vector3 position)
@@ -76,5 +64,7 @@ public class TributeController : MonoBehaviour
             position.z
             );
     }
+
+    
 
 }
