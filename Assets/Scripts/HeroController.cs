@@ -19,7 +19,9 @@ public class HeroController : MonoBehaviour
         firstPoint = startPoint.startingNavPoint;
         dfs = new DFS(firstPoint);
         NavPoint nextPoint = dfs.GetNextNavPoint();
-        //assuming we start physically at the start point
+        //put us at the start point if we're not
+        if (Vector3.Distance(transform.position, nextPoint.position) > 0.25f)
+            transform.position = nextPoint.position;
         nextPoint = dfs.GetNextNavPoint();
         currentPath = pathfinder.GetShortestPath(firstPoint, nextPoint);
         pathIndex = 0;
