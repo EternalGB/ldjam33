@@ -12,10 +12,12 @@ public class HeroController : MonoBehaviour
     int pathIndex;
     public Pathfinder pathfinder;
     NavPoint firstPoint;
+    GameController gc;
 
     // Use this for initialization
     void Start()
     {
+        gc = GameObject.FindWithTag("GameController").GetComponent<GameController>();
         firstPoint = startPoint.startingNavPoint;
         dfs = new DFS(firstPoint);
         NavPoint nextPoint = dfs.GetNextNavPoint();
@@ -32,8 +34,9 @@ public class HeroController : MonoBehaviour
     {
         if(currentPath != null)
         {
-            if (Vector3.Distance(transform.position, currentPath[pathIndex].position) < 0.25f)
+            if (Util.XZDistance(transform.position, currentPath[pathIndex].position) < 0.25f)
             {
+                SetXZPosition(currentPath[pathIndex].position);
                 pathIndex++;
                 if (pathIndex >= currentPath.Length)
                 {
@@ -59,5 +62,23 @@ public class HeroController : MonoBehaviour
         }
 
         transform.position += dir*speed * Time.deltaTime;
+    }
+
+    void OnCollisionEnter(Collision col)
+    {
+        if(col.gameObject.layer == LayerMask.NameToLayer("Tribute"))
+        {
+            Debug.Log("Theseus hit tribute");
+            Destroy(col.gameObject);
+        }
+    }
+
+    void SetXZPosition(Vector3 position)
+    {
+        transform.position = new Vector3(
+            position.x,
+            transform.position.y,
+            position.z
+            );
     }
 }

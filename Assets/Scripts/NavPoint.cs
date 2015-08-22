@@ -37,5 +37,15 @@ public class NavPoint : MonoBehaviour
 		}
 	}
 
+    public NavPoint GetRandomNeighbour()
+    {
+        if (neighbours.Count > 0)
+        {
+            return neighbours[neighbours.Count - 1];
+        }
+        else
+            return null;
+    }
+
 }
 

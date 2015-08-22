@@ -37,9 +37,11 @@ public class TributeController : MonoBehaviour
     {
         if (currentPath != null)
         {
-            
-            if (Vector3.Distance(transform.position, currentPath[pathIndex].position) < 0.4f)
+            //if we're close enough to our destination then go to the next point
+            if (Util.XZDistance(transform.position, currentPath[pathIndex].position) < 0.5f)
             {
+                //shift ourselves to where the point actually is
+                SetXZPosition(currentPath[pathIndex].position);
                 pathIndex++;
                 if (pathIndex >= currentPath.Length)
                 {
@@ -64,6 +66,15 @@ public class TributeController : MonoBehaviour
         }
 
         transform.position += dir * speed * Time.deltaTime;
+    }
+
+    void SetXZPosition(Vector3 position)
+    {
+        transform.position = new Vector3(
+            position.x,
+            transform.position.y,
+            position.z
+            );
     }
 
 }

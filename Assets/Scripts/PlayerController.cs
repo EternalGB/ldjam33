@@ -10,8 +10,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private Vector3 move;
 
+    GameController gc;
+
     void Awake()
     {
+        gc = GameObject.FindWithTag("GameController").GetComponent<GameController>();
+
         cc = GetComponent<CharacterController>();
         move = new Vector3();
     }

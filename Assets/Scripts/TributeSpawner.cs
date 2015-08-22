@@ -5,11 +5,10 @@ public class TributeSpawner : MonoBehaviour
 {
 
     public GameObject tributePrefab;
-    public int numTributes;
     public NavGrid navGrid;
     public List<NavPoint> notAllowedPoints;
 
-    void Start()
+    public void SpawnTributes(int numTributes)
     {
         for(int i = 0; i < numTributes; i++)
         {
