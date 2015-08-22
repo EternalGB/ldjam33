@@ -62,5 +62,7 @@ public class NavGrid : MonoBehaviour
         return (mask.value & 1 << layer) != 0;
     }
 
+
+
 }
 
