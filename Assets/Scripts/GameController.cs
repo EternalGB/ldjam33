@@ -6,6 +6,8 @@ public class GameController : MonoBehaviour
 {
 
     public GameObject gameOverUI;
+    public FillBar minotaurBar, theseusBar;
+    public GameObject minotaurHUD;
     public StartPoint[] startingPoints;
     public GameObject theseusPrefab;
     public int numTributes;
@@ -25,16 +27,27 @@ public class GameController : MonoBehaviour
             start.startingNavPoint.position, Quaternion.identity)).GetComponent<HeroController>();
         theseus.startPoint = start;
 
+        
     }
 
     public void TheseusGet()
     {
         theseusTributes++;
+        UpdateBars();
+        if (numTributes - theseusTributes < numNeeded)
+            GameOver(false);
     }
 
     public void MinotaurGet()
     {
         minotaurTributes++;
+        UpdateBars();
+    }
+
+    void UpdateBars()
+    {
+        theseusBar.SetFill((float)theseusTributes / (numTributes - minotaurTributes));
+        minotaurBar.SetFill((float)minotaurTributes / numNeeded);
     }
 
     public bool MinotaurHasEnough()
