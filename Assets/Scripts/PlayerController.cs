@@ -11,6 +11,9 @@ public class PlayerController : MonoBehaviour
     private Vector3 move;
 
     GameController gc;
+    public AudioClipPlayer footsteps;
+    float stepTimer = 0;
+    float stepInterval;
 
     void Awake()
     {
@@ -18,26 +21,20 @@ public class PlayerController : MonoBehaviour
 
         cc = GetComponent<CharacterController>();
         move = new Vector3();
+        stepInterval = speed / 3;
     }
 
     // Update is called once per frame
     void Update()
     {
 
-        Collider[] colliders = Physics.OverlapSphere(transform.position, transform.lossyScale.x / 2);
-        foreach (Collider col in colliders)
+        if(Input.GetAxis("Horizontal") > 0 || Input.GetAxis("Vertical") > 0)
         {
-            if (col.GetComponent<HeroController>())
+            stepTimer += Time.deltaTime;
+            if(stepTimer >= stepInterval)
             {
-                if (gc.MinotaurHasEnough())
-                {
-                    Destroy(col.gameObject);
-                    //TODO victory
-                }
-                else
-                {
-                    //TODO defeat
-                }
+                stepTimer = 0;
+                footsteps.PlayRandom();
             }
         }
 
