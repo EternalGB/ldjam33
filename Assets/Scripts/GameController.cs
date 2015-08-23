@@ -47,7 +47,7 @@ public class GameController : MonoBehaviour
     void UpdateBars()
     {
         if(!MinotaurHasEnough())
-            bar.SetFill(1,(float)theseusTributes / numNeeded);
+            bar.SetFill(1,(float)theseusTributes / (numTributes - numNeeded));
         else
             bar.SetFill(1, (float)theseusTributes / (numTributes - minotaurTributes));
         bar.SetFill(0,(float)minotaurTributes / numNeeded);
