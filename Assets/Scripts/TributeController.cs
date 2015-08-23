@@ -7,12 +7,11 @@ public class TributeController : MonoBehaviour
     public Pathfinder pathfinder;
     public NavPoint startPoint;
     public NavGrid grid;
-    public float speed;
-    public Vector3 dir;
+
     public NavPoint nextPoint, lastPoint;
 
-    float lerpTimer, lerpSpeed;
 
+    PointMovementController mover;
     GameController gc;
 
     void Start()
@@ -22,10 +21,11 @@ public class TributeController : MonoBehaviour
 
         lastPoint = startPoint;
         nextPoint = lastPoint.GetRandomNeighbour();
-        lerpTimer = 0;
-        lerpSpeed = speed/Vector3.Distance(lastPoint.position, nextPoint.position);
 
         gc = GameObject.FindWithTag("GameController").GetComponent<GameController>();
+        mover = GetComponent<PointMovementController>();
+        mover.OnArrival += SelectNewDest;
+        mover.SetNewDestination(lastPoint.position, nextPoint.position);
     }
 
     NavPoint GetRandomNavPoint(NavPoint currentPoint)
@@ -54,23 +54,15 @@ public class TributeController : MonoBehaviour
                 Destroy(gameObject);
             }
         }
-        //if we're close enough to our destination then go to the next point
-        if (lerpTimer >= 1)
-        {
-            //shift ourselves to where the point actually is
-            //transform.position = nextPoint.position;
 
-            NavPoint oldNext = nextPoint;
-            nextPoint = nextPoint.TryGetRandomDifferentPoint(lastPoint);
-            lastPoint = oldNext;
-            lerpTimer = 0;
-            lerpSpeed = speed/Vector3.Distance(lastPoint.position, nextPoint.position);
-        }
-        if (nextPoint != null)
-        {
-            lerpTimer += lerpSpeed*Time.deltaTime;
-            transform.position = Vector3.Lerp(lastPoint.position, nextPoint.position, lerpTimer);
-        }
+    }
+
+    void SelectNewDest()
+    {
+        NavPoint oldNext = nextPoint;
+        nextPoint = nextPoint.TryGetRandomDifferentPoint(lastPoint);
+        lastPoint = oldNext;
+        mover.SetNewDestination(lastPoint.position, nextPoint.position);
     }
 
     void SetXZPosition(Vector3 position)

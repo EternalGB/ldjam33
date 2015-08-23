@@ -24,6 +24,23 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
 
+        Collider[] colliders = Physics.OverlapSphere(transform.position, transform.lossyScale.x / 2);
+        foreach (Collider col in colliders)
+        {
+            if (col.GetComponent<HeroController>())
+            {
+                if (gc.MinotaurHasEnough())
+                {
+                    Destroy(col.gameObject);
+                    //TODO victory
+                }
+                else
+                {
+                    //TODO defeat
+                }
+            }
+        }
+
         float lastY = move.y;
         move.x = Input.GetAxis("Horizontal");
         move.y = 0;
