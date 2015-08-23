@@ -47,4 +47,23 @@ public static class Util
         while (!Util.PointOnNavMesh(desiredDest, 5, out dest)) ;
         return dest;
     }
+
+    public static Collider GetClosestMatching(Collider[] colliders, Vector3 position, System.Predicate<Collider> check)
+    {
+        float bestDist = float.MaxValue;
+        Collider bestCol = null;
+        foreach(Collider col in colliders)
+        {
+            if(check(col))
+            {
+                float dist = Vector3.Distance(col.transform.position, position);
+                if(dist < bestDist)
+                {
+                    bestDist = dist;
+                    bestCol = col;
+                }
+            }
+        }
+        return bestCol;
+    }
 }

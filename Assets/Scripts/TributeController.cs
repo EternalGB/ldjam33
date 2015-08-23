@@ -25,7 +25,7 @@ public class TributeController : MonoBehaviour
 
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
-        agent.SetDestination(Util.RandomNavMeshPt(mazeCenter, mazeRadius));
+        SetDestination(Util.RandomNavMeshPt(mazeCenter, mazeRadius));
         fleeing = false;
         foundHero = false;
     }
@@ -69,7 +69,7 @@ public class TributeController : MonoBehaviour
                         //run away
                         Vector3 fleeDir = -minotaurDir;
                         Vector3 desired = transform.position + fleeDir*2;
-                        agent.SetDestination(Util.GetNearestPtOnNavMesh(desired));
+                        SetDestination(desired);
                         fleeing = true;
                         foundHero = false;
                     }
@@ -97,13 +97,13 @@ public class TributeController : MonoBehaviour
                     {
                         if (hitInfo.collider.GetComponent<HeroController>())
                         {
-                            agent.SetDestination(theseus.transform.position);
+                            SetDestination(theseus.transform.position);
                             foundHero = true;
                         }
                     }
                     else if(foundHero)
                     {
-                        agent.SetDestination(Util.RandomNavMeshPt(mazeCenter, mazeRadius));
+                        SetDestination(Util.RandomNavMeshPt(mazeCenter, mazeRadius));
                         foundHero = false;
                     }
                     break;
@@ -115,7 +115,7 @@ public class TributeController : MonoBehaviour
         if (!agent.pathPending && (!agent.hasPath || agent.velocity.sqrMagnitude == 0f) 
             && agent.remainingDistance <= agent.stoppingDistance)
         {
-            agent.SetDestination(Util.RandomNavMeshPt(mazeCenter, mazeRadius));
+            SetDestination(Util.RandomNavMeshPt(mazeCenter, mazeRadius));
             fleeing = false;
             foundHero = false;
         }
@@ -131,7 +131,10 @@ public class TributeController : MonoBehaviour
     }
 
 
-
+    void SetDestination(Vector3 desired)
+    {
+        agent.SetDestination(Util.GetNearestPtOnNavMesh(desired));
+    }
     
 
 }

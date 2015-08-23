@@ -11,6 +11,9 @@ public class HeroController : MonoBehaviour
 
     NavMeshAgent agent;
 
+    public LayerMask tributeCheckMask;
+    bool foundTribute;
+
     // Use this for initialization
     void Start()
     {
@@ -29,20 +32,54 @@ public class HeroController : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
         SetDestination(nextPoint.position);
+        foundTribute = false;
     }
 
     // Update is called once per frame
     void Update()
     {
 
+
+
+        //go to tribute
+        Collider[] colliders = Physics.OverlapSphere(transform.position, 8, 1<<LayerMask.NameToLayer("Tribute"));
+        Collider target = Util.GetClosestMatching(colliders, transform.position,
+            (col) =>
+            {
+                return col.GetComponent<TributeController>() != null;
+            });
+        if(target != null)
+        {
+            TributeController tribute = target.GetComponent<TributeController>();
+            Vector3 pos = tribute.transform.position;
+            Vector3 dir = (pos - transform.position).normalized;
+            //if we can also see the minotaur
+            RaycastHit hitInfo;
+            Debug.DrawLine(transform.position, pos);
+            if (Physics.Raycast(transform.position, dir, out hitInfo, tributeCheckMask.value))
+            {
+                if (hitInfo.collider.GetComponent<TributeController>())
+                {
+                    SetDestination(tribute.transform.position);
+                    foundTribute = true;
+                }
+            }
+            else if (foundTribute)
+            {
+                SetDestination(nextPoint.position);
+                foundTribute = false;
+            }
+        }
+
         if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance &&
             (!agent.hasPath || agent.velocity.sqrMagnitude == 0f))
         {
             nextPoint = dfs.GetNextNavPoint();
             SetDestination(nextPoint.position);
+            foundTribute = false;
         }
-
     }
+
 
     void SetDestination(Vector3 desired)
     {
