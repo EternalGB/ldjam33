@@ -14,6 +14,8 @@ public class TributeController : MonoBehaviour
     bool fleeing;
     bool foundHero;
 
+    public float wanderSpeed, chaseSpeed;
+
     void Start()
     {
 
@@ -80,7 +82,7 @@ public class TributeController : MonoBehaviour
         //if we're not fleeing maybe we can see theseus
         if(!fleeing)
         {
-            colliders = Physics.OverlapSphere(transform.position, 8);
+            colliders = Physics.OverlapSphere(transform.position, 10);
             foreach (Collider col in colliders)
             {
                 HeroController theseus;
@@ -99,6 +101,11 @@ public class TributeController : MonoBehaviour
                             foundHero = true;
                         }
                     }
+                    else if(foundHero)
+                    {
+                        agent.SetDestination(Util.RandomNavMeshPt(mazeCenter, mazeRadius));
+                        foundHero = false;
+                    }
                     break;
                 }
 
@@ -110,9 +117,17 @@ public class TributeController : MonoBehaviour
         {
             agent.SetDestination(Util.RandomNavMeshPt(mazeCenter, mazeRadius));
             fleeing = false;
+            foundHero = false;
         }
         
-         
+        if(fleeing || foundHero)
+        {
+            agent.speed = chaseSpeed;
+        }
+        else
+        {
+            agent.speed = wanderSpeed;
+        }
     }
 
 
