@@ -18,13 +18,7 @@ public static class Util
 
     public static Vector3 RandomNavMeshPt(Vector3 mazeCenter, float mazeRadius)
     {
-        Vector3 randPt;
-        Vector3 result;
-        do
-        {
-            randPt = RandomPointInXZArea(mazeCenter, mazeRadius);
-        } while (!PointOnNavMesh(randPt, 2, out result));
-        return result;
+        return GetNearestPtOnNavMesh(RandomPointInXZArea(mazeCenter, mazeRadius));
     }
 
     public static Vector3 RandomPointInXZArea(Vector3 center, float radius)
@@ -45,5 +39,12 @@ public static class Util
         }
         result = Vector3.zero;
         return false;
+    }
+
+    public static Vector3 GetNearestPtOnNavMesh(Vector3 desiredDest)
+    {
+        Vector3 dest;
+        while (!Util.PointOnNavMesh(desiredDest, 5, out dest)) ;
+        return dest;
     }
 }

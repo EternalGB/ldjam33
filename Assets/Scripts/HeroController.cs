@@ -39,16 +39,14 @@ public class HeroController : MonoBehaviour
             (!agent.hasPath || agent.velocity.sqrMagnitude == 0f))
         {
             nextPoint = dfs.GetNextNavPoint();
-            agent.SetDestination(nextPoint.position);
+            SetDestination(nextPoint.position);
         }
 
     }
 
-    void SetDestination(Vector3 desiredDest)
+    void SetDestination(Vector3 desired)
     {
-        Vector3 dest;
-        while (!Util.PointOnNavMesh(desiredDest, 5, out dest)) ;
-        agent.SetDestination(dest);
+        agent.SetDestination(Util.GetNearestPtOnNavMesh(desired));
     }
 
     void SetXZPosition(Vector3 position)
