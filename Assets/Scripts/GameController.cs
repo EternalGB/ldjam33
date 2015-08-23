@@ -7,6 +7,7 @@ public class GameController : MonoBehaviour
     public int numTributes;
     public int theseusTributes, minotaurTributes;
     public TributeSpawner spawner;
+    public int numNeeded;
 
     // Use this for initialization
     void Start()
@@ -16,14 +17,19 @@ public class GameController : MonoBehaviour
         spawner.SpawnTributes(numTributes);
     }
 
-    void TheseusGet()
+    public void TheseusGet()
     {
         theseusTributes++;
     }
 
-    void MinotaurGet()
+    public void MinotaurGet()
     {
         minotaurTributes++;
+    }
+
+    public bool MinotaurHasEnough()
+    {
+        return minotaurTributes >= numNeeded;
     }
 
 }

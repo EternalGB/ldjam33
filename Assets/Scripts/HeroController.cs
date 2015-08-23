@@ -32,6 +32,23 @@ public class HeroController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Collider[] colliders = Physics.OverlapSphere(transform.position, transform.lossyScale.x / 2);
+        foreach(Collider col in colliders)
+        {
+            if(col.GetComponent<HeroController>())
+            {
+                if(gc.MinotaurHasEnough())
+                {
+                    Destroy(col.gameObject);
+                    //TODO victory
+                }
+                else
+                {
+                    //TODO defeat
+                }
+            }
+        }
+
         if(currentPath != null)
         {
             if (Util.XZDistance(transform.position, currentPath[pathIndex].position) < 0.25f)
@@ -62,15 +79,6 @@ public class HeroController : MonoBehaviour
         }
 
         transform.position += dir*speed * Time.deltaTime;
-    }
-
-    void OnCollisionEnter(Collision col)
-    {
-        if(col.gameObject.layer == LayerMask.NameToLayer("Tribute"))
-        {
-            Debug.Log("Theseus hit tribute");
-            Destroy(col.gameObject);
-        }
     }
 
     void SetXZPosition(Vector3 position)

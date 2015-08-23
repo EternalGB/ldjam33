@@ -13,6 +13,8 @@ public class TributeController : MonoBehaviour
 
     float lerpTimer, lerpSpeed;
 
+    GameController gc;
+
     void Start()
     {
         pathfinder = GameObject.FindWithTag("Pathfinder").GetComponent<Pathfinder>();
@@ -22,6 +24,8 @@ public class TributeController : MonoBehaviour
         nextPoint = lastPoint.GetRandomNeighbour();
         lerpTimer = 0;
         lerpSpeed = speed/Vector3.Distance(lastPoint.position, nextPoint.position);
+
+        gc = GameObject.FindWithTag("GameController").GetComponent<GameController>();
     }
 
     NavPoint GetRandomNavPoint(NavPoint currentPoint)
@@ -36,7 +40,20 @@ public class TributeController : MonoBehaviour
 
     void Update()
     {
-        
+        Collider[] colliders = Physics.OverlapSphere(transform.position, transform.lossyScale.z/2);
+        foreach(Collider col in colliders)
+        {
+            if(col.GetComponent<HeroController>())
+            {
+                gc.TheseusGet();
+                Destroy(gameObject);
+            }
+            else if(col.GetComponent<PlayerController>())
+            {
+                gc.MinotaurGet();
+                Destroy(gameObject);
+            }
+        }
         //if we're close enough to our destination then go to the next point
         if (lerpTimer >= 1)
         {
@@ -64,6 +81,8 @@ public class TributeController : MonoBehaviour
             position.z
             );
     }
+
+
 
     
 
