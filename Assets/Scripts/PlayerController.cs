@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
     float stepTimer = 0;
     float stepInterval;
 
+
     void Awake()
     {
         gc = GameObject.FindWithTag("GameController").GetComponent<GameController>();

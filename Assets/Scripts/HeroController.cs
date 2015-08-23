@@ -15,6 +15,8 @@ public class HeroController : MonoBehaviour
     bool foundTribute;
     public float chaseSpeed, searchSpeed;
 
+    bool escaping = false;
+
     // Use this for initialization
     void Start()
     {
@@ -45,10 +47,17 @@ public class HeroController : MonoBehaviour
         if(colliders != null && colliders.Length > 0)
         {
             PlayerController pc = colliders[0].GetComponent<PlayerController>();
-            gc.GameOver(gc.MinotaurHasEnough());
+            bool win = gc.MinotaurHasEnough();
+            string msg = win ? "Theseus Defeated" : "You were not strong enough to beat Theseus. Collect more tributes";
+            gc.GameOver(win, msg);
         }
 
-
+        //return to the start
+        if(gc.TheseusAllCollected() && !escaping)
+        {
+            escaping = true;
+            SetDestination(firstPoint.position);
+        }
 
 
         //go to tribute
@@ -84,6 +93,10 @@ public class HeroController : MonoBehaviour
         if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance &&
             (!agent.hasPath || agent.velocity.sqrMagnitude == 0f))
         {
+            if(escaping)
+            {
+                gc.GameOver(false, "Theseus Escaped");
+            }
             nextPoint = dfs.GetNextNavPoint();
             SetDestination(nextPoint.position);
             foundTribute = false;

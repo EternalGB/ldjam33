@@ -6,6 +6,7 @@ public class GameController : MonoBehaviour
 {
 
     public GameObject gameOverUI;
+    public Text endText, explanationText;
     public FillBar bar;
     public GameObject minotaurHUD;
     public StartPoint[] startingPoints;
@@ -15,6 +16,7 @@ public class GameController : MonoBehaviour
     public TributeSpawner spawner;
     public int numNeeded;
 
+    public AudioSource eatSound;
 
     // Use this for initialization
     void Start()
@@ -35,12 +37,13 @@ public class GameController : MonoBehaviour
         theseusTributes++;
         UpdateBars();
         if (numTributes - theseusTributes < numNeeded)
-            GameOver(false);
+            GameOver(false, "Theseus collected too many tributes. He can no longer be killed");
     }
 
     public void MinotaurGet()
     {
         minotaurTributes++;
+        eatSound.Play();
         UpdateBars();
     }
 
@@ -58,11 +61,17 @@ public class GameController : MonoBehaviour
         return minotaurTributes >= numNeeded;
     }
 
-    public void GameOver(bool playerWon)
+    public bool TheseusAllCollected()
+    {
+        return numTributes - theseusTributes - minotaurTributes == 0;
+    }
+
+    public void GameOver(bool playerWon, string message)
     {
         gameOverUI.SetActive(true);
         minotaurHUD.SetActive(false);
-        gameOverUI.GetComponentInChildren<Text>().text = playerWon ? "You Win" : "You Lose";
+        endText.text = playerWon ? "You Win" : "You Lose";
+        explanationText.text = message;
 
     }
 
