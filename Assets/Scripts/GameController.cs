@@ -6,7 +6,7 @@ public class GameController : MonoBehaviour
 {
 
     public GameObject gameOverUI;
-    public FillBar minotaurBar, theseusBar;
+    public FillBar bar;
     public GameObject minotaurHUD;
     public StartPoint[] startingPoints;
     public GameObject theseusPrefab;
@@ -46,8 +46,11 @@ public class GameController : MonoBehaviour
 
     void UpdateBars()
     {
-        theseusBar.SetFill((float)theseusTributes / (numTributes - minotaurTributes));
-        minotaurBar.SetFill((float)minotaurTributes / numNeeded);
+        if(!MinotaurHasEnough())
+            bar.SetFill(1,(float)theseusTributes / numNeeded);
+        else
+            bar.SetFill(1, (float)theseusTributes / (numTributes - minotaurTributes));
+        bar.SetFill(0,(float)minotaurTributes / numNeeded);
     }
 
     public bool MinotaurHasEnough()

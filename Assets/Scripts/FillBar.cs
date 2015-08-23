@@ -5,11 +5,12 @@ using UnityEngine.UI;
 public class FillBar : MonoBehaviour
 {
 
-    public Image filling;
+    public Image[] fills;
 
-    public void SetFill(float value)
+
+    public void SetFill(int index, float value)
     {
-        filling.fillAmount = value;
+        fills[index].fillAmount = value;
     }
 
 }
