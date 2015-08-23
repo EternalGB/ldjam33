@@ -22,7 +22,7 @@ public class TributeController : MonoBehaviour
 
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
-        agent.SetDestination(RandomNavMeshPt());
+        agent.SetDestination(Util.RandomNavMeshPt(mazeCenter, mazeRadius));
         fleeing = false;
     }
 
@@ -67,7 +67,7 @@ public class TributeController : MonoBehaviour
                             Vector3 dest;
                             Vector3 fleeDir = -minotaurDir;
                             Vector3 desired = transform.position + fleeDir*2;
-                            while (!PointOnNavMesh(desired, 5, out dest)) ;
+                            while (!Util.PointOnNavMesh(desired, 5, out dest)) ;
                             agent.SetDestination(dest);
                             fleeing = true;
                         }
@@ -81,43 +81,14 @@ public class TributeController : MonoBehaviour
         if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance &&
             (!agent.hasPath || agent.velocity.sqrMagnitude == 0f))
         {
-            agent.SetDestination(RandomNavMeshPt());
+            agent.SetDestination(Util.RandomNavMeshPt(mazeCenter, mazeRadius));
             fleeing = false;
         }
         
          
     }
 
-    Vector3 RandomNavMeshPt()
-    {
-        Vector3 randPt;
-        Vector3 result;
-        do
-        {
-            randPt = RandomPointInMaze(mazeCenter, mazeRadius);
-        } while (!PointOnNavMesh(randPt, 2, out result));
-        return result;
-    }
 
-    Vector3 RandomPointInMaze(Vector3 center, float radius)
-    {
-        return center + new Vector3(Random.Range(-radius, radius), 0, Random.Range(-radius, radius));
-    }
-
-    bool PointOnNavMesh(Vector3 desiredPt, float searchRadius, out Vector3 result)
-    {
-        for (int i = 0; i < 30; i++)
-        {
-            NavMeshHit hit;
-            if (NavMesh.SamplePosition(desiredPt, out hit, searchRadius, NavMesh.AllAreas))
-            {
-                result = hit.position;
-                return true;
-            }
-        }
-        result = Vector3.zero;
-        return false;
-    }
 
     
 
