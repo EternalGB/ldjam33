@@ -88,6 +88,15 @@ public class HeroController : MonoBehaviour
             SetDestination(nextPoint.position);
             foundTribute = false;
         }
+
+        if(foundTribute)
+        {
+            agent.speed = chaseSpeed;
+        }
+        else
+        {
+            agent.speed = searchSpeed;
+        }
     }
 
 

@@ -6,7 +6,8 @@ public class GameController : MonoBehaviour
 {
 
     public GameObject gameOverUI;
-    
+    public StartPoint[] startingPoints;
+    public GameObject theseusPrefab;
     public int numTributes;
     public int theseusTributes, minotaurTributes;
     public TributeSpawner spawner;
@@ -19,6 +20,11 @@ public class GameController : MonoBehaviour
         theseusTributes = 0;
         minotaurTributes = 0;
         spawner.SpawnTributes(numTributes);
+        StartPoint start = startingPoints[Random.Range(0,startingPoints.Length-1)];
+        HeroController theseus = ((GameObject)Instantiate(theseusPrefab, 
+            start.startingNavPoint.position, Quaternion.identity)).GetComponent<HeroController>();
+        theseus.startPoint = start;
+
     }
 
     public void TheseusGet()
