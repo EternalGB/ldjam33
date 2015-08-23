@@ -11,7 +11,7 @@ public class TributeController : MonoBehaviour
     public NavPoint nextPoint, lastPoint;
 
 
-    PointMovementController mover;
+    public PointMovementController mover;
     GameController gc;
 
     void Start()
@@ -23,7 +23,6 @@ public class TributeController : MonoBehaviour
         nextPoint = lastPoint.GetRandomNeighbour();
 
         gc = GameObject.FindWithTag("GameController").GetComponent<GameController>();
-        mover = GetComponent<PointMovementController>();
         mover.OnArrival += SelectNewDest;
         mover.SetNewDestination(lastPoint.position, nextPoint.position);
     }
