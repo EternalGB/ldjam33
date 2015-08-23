@@ -32,19 +32,16 @@ public class PointMovementController : MonoBehaviour
     {
         lastPos = currentPosition;
         nextPos = destination;
+        //if we're really close just jump there
+        transform.position = currentPosition;
+        StartMoving();
         //check to see if we're actually at current position
         //or if we have to move a bit closer
         if(Vector3.Distance(transform.position, currentPosition) < 0.2f)
         {
-            //if we're really close just jump there
-            transform.position = currentPosition;
-            StartMoving();
+            
         }
-        else
-        {
-            //otherwise we have to lerp closer
-            backup.SetNewDestination(transform.position, currentPosition);
-        }
+
         
 
     }
@@ -74,5 +71,21 @@ public class PointMovementController : MonoBehaviour
         lerpSpeed = speed / Vector3.Distance(lastPos, nextPos);
         lerpTimer = 0;
         moving = true;
+    }
+
+    public void Resume()
+    {
+        lastPos = transform.position;
+        StartMoving();
+    }
+
+    public void Stop()
+    {
+        moving = false;
+    }
+
+    public Vector3 GetDir()
+    {
+        return (nextPos - lastPos).normalized;
     }
 }

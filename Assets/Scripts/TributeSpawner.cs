@@ -19,7 +19,7 @@ public class TributeSpawner : MonoBehaviour
             trib.transform.position = new Vector3(trib.transform.position.x,
                 tributePrefab.transform.position.y,
                 trib.transform.position.z);
-            trib.GetComponent<TributeController>().startPoint = startPoint;
+            //trib.GetComponent<TributeController>().startPoint = startPoint;
         }
     }
 

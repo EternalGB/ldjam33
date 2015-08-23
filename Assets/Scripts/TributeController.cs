@@ -4,42 +4,31 @@ using System.Collections;
 public class TributeController : MonoBehaviour
 {
 
-    public Pathfinder pathfinder;
-    public NavPoint startPoint;
-    public NavGrid grid;
-
-    public NavPoint nextPoint, lastPoint;
+    public Vector3 mazeCenter;
+    public float mazeRadius;
 
 
-    public PointMovementController mover;
     GameController gc;
+    NavMeshAgent agent;
+
+    bool fleeing;
 
     void Start()
     {
-        pathfinder = GameObject.FindWithTag("Pathfinder").GetComponent<Pathfinder>();
-        grid = GameObject.FindWithTag("NavGrid").GetComponent<NavGrid>();
 
-        lastPoint = startPoint;
-        nextPoint = lastPoint.GetRandomNeighbour();
 
         gc = GameObject.FindWithTag("GameController").GetComponent<GameController>();
-        mover.OnArrival += SelectNewDest;
-        mover.SetNewDestination(lastPoint.position, nextPoint.position);
-    }
 
-    NavPoint GetRandomNavPoint(NavPoint currentPoint)
-    {
-        NavPoint point = null;
-        do
-        {
-            point = grid.points[Random.Range(0, grid.points.Count)];
-        } while (point.GetInstanceID() == currentPoint.GetInstanceID());
-        return point;
+
+        agent = GetComponent<NavMeshAgent>();
+        agent.updateRotation = false;
+        agent.SetDestination(RandomNavMeshPt());
+        fleeing = false;
     }
 
     void Update()
     {
-        Collider[] colliders = Physics.OverlapSphere(transform.position, transform.lossyScale.z/2);
+        Collider[] colliders = Physics.OverlapSphere(transform.position, transform.lossyScale.z);
         foreach(Collider col in colliders)
         {
             if(col.GetComponent<HeroController>())
@@ -54,26 +43,81 @@ public class TributeController : MonoBehaviour
             }
         }
 
+        
+        
+        //check to see if the minotaur is nearby
+        if(!fleeing)
+        {
+            colliders = Physics.OverlapSphere(transform.position, 8);
+            foreach (Collider col in colliders)
+            {
+                PlayerController minotaur;
+                if (minotaur = col.GetComponent<PlayerController>())
+                {
+                    Vector3 minotaurPos = minotaur.transform.position;
+                    Vector3 minotaurDir = (minotaurPos - transform.position).normalized;
+                    //if we can also see the minotaur
+                    RaycastHit hitInfo;
+                    Debug.DrawRay(transform.position, minotaurDir);
+                    if (Physics.Raycast(transform.position, minotaurDir, out hitInfo))
+                    {
+                        if (hitInfo.collider.GetComponent<PlayerController>())
+                        {
+                            //run away
+                            Vector3 dest;
+                            Vector3 fleeDir = -minotaurDir;
+                            Vector3 desired = transform.position + fleeDir*2;
+                            while (!PointOnNavMesh(desired, 5, out dest)) ;
+                            agent.SetDestination(dest);
+                            fleeing = true;
+                        }
+                    }
+                    break;
+                }
+
+            }
+        }
+
+        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance &&
+            (!agent.hasPath || agent.velocity.sqrMagnitude == 0f))
+        {
+            agent.SetDestination(RandomNavMeshPt());
+            fleeing = false;
+        }
+        
+         
     }
 
-    void SelectNewDest()
+    Vector3 RandomNavMeshPt()
     {
-        NavPoint oldNext = nextPoint;
-        nextPoint = nextPoint.TryGetRandomDifferentPoint(lastPoint);
-        lastPoint = oldNext;
-        mover.SetNewDestination(lastPoint.position, nextPoint.position);
+        Vector3 randPt;
+        Vector3 result;
+        do
+        {
+            randPt = RandomPointInMaze(mazeCenter, mazeRadius);
+        } while (!PointOnNavMesh(randPt, 2, out result));
+        return result;
     }
 
-    void SetXZPosition(Vector3 position)
+    Vector3 RandomPointInMaze(Vector3 center, float radius)
     {
-        transform.position = new Vector3(
-            position.x,
-            transform.position.y,
-            position.z
-            );
+        return center + new Vector3(Random.Range(-radius, radius), 0, Random.Range(-radius, radius));
     }
 
-
+    bool PointOnNavMesh(Vector3 desiredPt, float searchRadius, out Vector3 result)
+    {
+        for (int i = 0; i < 30; i++)
+        {
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(desiredPt, out hit, searchRadius, NavMesh.AllAreas))
+            {
+                result = hit.position;
+                return true;
+            }
+        }
+        result = Vector3.zero;
+        return false;
+    }
 
     
 
