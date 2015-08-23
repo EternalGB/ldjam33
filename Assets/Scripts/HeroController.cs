@@ -17,6 +17,12 @@ public class HeroController : MonoBehaviour
 
     bool escaping = false;
 
+    public AudioClipPlayer footsteps;
+    float stepTimer = 0;
+    float stepInterval;
+
+    bool hitMinotaur = false;
+
     // Use this for initialization
     void Start()
     {
@@ -41,6 +47,18 @@ public class HeroController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        stepInterval = 1.5f / agent.velocity.magnitude;
+        //footsteps
+        if(agent.velocity.magnitude > 0)
+        {
+            stepTimer += Time.deltaTime;
+            if (stepTimer >= stepInterval)
+            {
+                stepTimer = 0;
+                footsteps.PlayRandom();
+            }
+        }
+
         //check to see if we've hit the minotaur
         Collider[] colliders = Physics.OverlapSphere(transform.position, 
             transform.lossyScale.z, 1 << LayerMask.NameToLayer("Minotaur"));
@@ -49,7 +67,13 @@ public class HeroController : MonoBehaviour
             PlayerController pc = colliders[0].GetComponent<PlayerController>();
             bool win = gc.MinotaurHasEnough();
             string msg = win ? "Theseus Defeated" : "You were not strong enough to beat Theseus. Collect more tributes";
-            gc.GameOver(win, msg);
+            if(!hitMinotaur)
+            {
+                gc.GameOver(win, msg);
+                hitMinotaur = true;
+                Destroy(gameObject);
+            }
+            
         }
 
         //return to the start

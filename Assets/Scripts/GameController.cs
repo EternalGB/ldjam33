@@ -17,6 +17,9 @@ public class GameController : MonoBehaviour
     public int numNeeded;
 
     public AudioSource eatSound;
+    AudioClipPlayer theseusGetSounds;
+
+    public AudioSource loseSound, winSound;
 
     // Use this for initialization
     void Start()
@@ -29,12 +32,13 @@ public class GameController : MonoBehaviour
             start.startingNavPoint.position, Quaternion.identity)).GetComponent<HeroController>();
         theseus.startPoint = start;
 
-        
+        theseusGetSounds = theseus.transform.FindChild("GetSounds").GetComponent<AudioClipPlayer>();
     }
 
     public void TheseusGet()
     {
         theseusTributes++;
+        theseusGetSounds.PlayRandom();
         UpdateBars();
         if (numTributes - theseusTributes < numNeeded)
             GameOver(false, "Theseus collected too many tributes. He can no longer be killed");
@@ -70,6 +74,11 @@ public class GameController : MonoBehaviour
     {
         gameOverUI.SetActive(true);
         minotaurHUD.SetActive(false);
+        if (playerWon && !(winSound.isPlaying || loseSound.isPlaying))
+            winSound.Play();
+        else
+            loseSound.Play();
+
         endText.text = playerWon ? "You Win" : "You Lose";
         explanationText.text = message;
 

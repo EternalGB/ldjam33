@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
 {
 
-    public float speed;
+    public float speed, chargeSpeed, chargeDuration, chargeCooldown;
+    public Image chargeIcon;
     CharacterController cc;
     [SerializeField]
     private Vector3 move;
@@ -15,6 +17,10 @@ public class PlayerController : MonoBehaviour
     float stepTimer = 0;
     float stepInterval;
 
+    bool canCharge = true;
+    bool charging = false;
+    float chargeTimer;
+    float chargeCooldownTimer;
 
     void Awake()
     {
@@ -22,14 +28,15 @@ public class PlayerController : MonoBehaviour
 
         cc = GetComponent<CharacterController>();
         move = new Vector3();
-        stepInterval = speed / 3;
+        
     }
 
     // Update is called once per frame
     void Update()
     {
+        stepInterval = 1.5f/(charging ? chargeSpeed : speed);
 
-        if(Input.GetAxis("Horizontal") > 0 || Input.GetAxis("Vertical") > 0)
+        if(Input.GetAxis("Horizontal") > 0 || Input.GetAxis("Vertical") > 0 || charging)
         {
             stepTimer += Time.deltaTime;
             if(stepTimer >= stepInterval)
@@ -39,14 +46,44 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        if(charging)
+        {
+            chargeTimer -= Time.deltaTime;
+            if(chargeTimer <= 0)
+            {
+                charging = false;
+                
+            }
+        }
+
+        if(!canCharge)
+        {
+            chargeCooldownTimer -= Time.deltaTime;
+            chargeIcon.fillAmount = 1 - chargeCooldownTimer / chargeCooldown;
+            if(chargeCooldownTimer <= 0)
+            {
+                canCharge = true;
+                
+            }
+        }
+
+        if(Input.GetAxis("Fire2") > 0 && canCharge)
+        {
+            charging = true;
+            canCharge = false;
+            chargeTimer = chargeDuration;
+            chargeCooldownTimer = chargeCooldown;
+            chargeIcon.fillAmount = 0;
+        }
+
         float lastY = move.y;
         move.x = Input.GetAxis("Horizontal");
         move.y = 0;
-        move.z = Input.GetAxis("Vertical");
+        move.z = charging ? 1 : Input.GetAxis("Vertical");
 
         move = transform.TransformDirection(move);
-        move.x *= speed;
-        move.z *= speed;
+        move.x *= charging ? chargeSpeed : speed;
+        move.z *= charging ? chargeSpeed : speed;
         move.y = lastY;
         cc.Move(move * Time.deltaTime);
     }

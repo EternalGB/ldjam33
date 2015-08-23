@@ -4,6 +4,8 @@ using System.Collections;
 public class TributeController : MonoBehaviour
 {
 
+
+
     public Vector3 mazeCenter;
     public float mazeRadius;
     public LayerMask minotaurCheckMask, theseusCheckMask;
@@ -15,6 +17,8 @@ public class TributeController : MonoBehaviour
     bool foundHero;
 
     public float wanderSpeed, chaseSpeed;
+
+    public AudioClipPlayer screams;
 
     void Start()
     {
@@ -71,6 +75,7 @@ public class TributeController : MonoBehaviour
                         Vector3 desired = transform.position + fleeDir*2;
                         SetDestination(desired);
                         fleeing = true;
+                        screams.PlayRandom();
                         foundHero = false;
                     }
                 }
