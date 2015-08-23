@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
     bool charging = false;
     float chargeTimer;
     float chargeCooldownTimer;
+    public AudioSource chargeSound;
 
     void Awake()
     {
@@ -74,6 +75,7 @@ public class PlayerController : MonoBehaviour
             chargeTimer = chargeDuration;
             chargeCooldownTimer = chargeCooldown;
             chargeIcon.fillAmount = 0;
+            chargeSound.Play();
         }
 
         float lastY = move.y;
