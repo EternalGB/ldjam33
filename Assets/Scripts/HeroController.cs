@@ -13,6 +13,7 @@ public class HeroController : MonoBehaviour
 
     public LayerMask tributeCheckMask;
     bool foundTribute;
+    public float chaseSpeed, searchSpeed;
 
     // Use this for initialization
     void Start()
@@ -38,11 +39,20 @@ public class HeroController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //check to see if we've hit the minotaur
+        Collider[] colliders = Physics.OverlapSphere(transform.position, 
+            transform.lossyScale.z, 1 << LayerMask.NameToLayer("Minotaur"));
+        if(colliders != null && colliders.Length > 0)
+        {
+            PlayerController pc = colliders[0].GetComponent<PlayerController>();
+            gc.GameOver(gc.MinotaurHasEnough());
+        }
+
 
 
 
         //go to tribute
-        Collider[] colliders = Physics.OverlapSphere(transform.position, 8, 1<<LayerMask.NameToLayer("Tribute"));
+        colliders = Physics.OverlapSphere(transform.position, 8, 1<<LayerMask.NameToLayer("Tribute"));
         Collider target = Util.GetClosestMatching(colliders, transform.position,
             (col) =>
             {

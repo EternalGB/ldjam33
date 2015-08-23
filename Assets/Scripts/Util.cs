@@ -66,4 +66,9 @@ public static class Util
         }
         return bestCol;
     }
+
+    public static Collider GetClosest(Collider[] colliders, Vector3 position)
+    {
+        return GetClosestMatching(colliders, position, (col) => { return true; });
+    }
 }
