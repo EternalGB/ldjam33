@@ -61,6 +61,7 @@ public class GameController : MonoBehaviour
     public void GameOver(bool playerWon)
     {
         gameOverUI.SetActive(true);
+        minotaurHUD.SetActive(false);
         gameOverUI.GetComponentInChildren<Text>().text = playerWon ? "You Win" : "You Lose";
 
     }

@@ -28,6 +28,7 @@ public class MapController : MonoBehaviour
         else
         {
             show = false;
+
         }
 
         lerpSpeed = show ? showSpeed : -showSpeed;
